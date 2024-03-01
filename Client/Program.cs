@@ -3,6 +3,7 @@
 
 using SiLAGen.Client.TestService;
 using System.Windows.Input;
+using Tecan.Sila2.Cancellation;
 using Tecan.Sila2.Cancellation.CancelController;
 using Tecan.Sila2.Client;
 using Tecan.Sila2.Discovery;
@@ -27,6 +28,16 @@ cancelControllerClient.CancelCommand((cancelCommand as IClientCommand).CommandId
 
 // error message as follows:
 // Tecan.Sila2.Cancellation.OperationNotSupportedException: 'The provided command does not support cancellation.'
-var command = silaClient.ObservableIntermediateCommandWithCancellation();
-await Task.Delay(1000);
-cancelControllerClient.CancelCommand((command as IClientCommand).CommandId);
+
+try
+{
+    var command = silaClient.ObservableIntermediateCommandWithCancellation();
+    await Task.Delay(1000);
+    cancelControllerClient.CancelCommand((command as IClientCommand).CommandId);
+}
+catch(OperationNotSupportedException ex) 
+{ 
+    Console.WriteLine(ex.Message);
+}
+
+Console.ReadLine();
