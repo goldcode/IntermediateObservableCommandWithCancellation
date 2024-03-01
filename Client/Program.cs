@@ -7,6 +7,7 @@ using Tecan.Sila2.Cancellation.CancelController;
 using Tecan.Sila2.Client;
 using Tecan.Sila2.Discovery;
 
+// wait for server to startup.
 await Task.Delay(2000);
 
 var connector = new ServerConnector(new DiscoveryExecutionManager());
@@ -20,14 +21,12 @@ var silaClient = new TestServiceClient(server.Channel, executionManagerFactory);
 var cancelControllerClient = new CancelControllerClient(server.Channel, executionManagerFactory);
 silaClient.Initialize();
 
+// this command works
 var cancelCommand = silaClient.CancelCommandWorks();
 cancelControllerClient.CancelCommand((cancelCommand as IClientCommand).CommandId);
 
+// error message as follows:
+// Tecan.Sila2.Cancellation.OperationNotSupportedException: 'The provided command does not support cancellation.'
 var command = silaClient.ObservableIntermediateCommandWithCancellation();
 await Task.Delay(1000);
 cancelControllerClient.CancelCommand((command as IClientCommand).CommandId);
-
-//var commandExecution = silaClient.SomeCommand();
-//await Task.Delay(2000);
-//cancelControllerClient.CancelCommand((commandExecution as IClientCommand ?? throw new NullReferenceException(nameof(commandExecution))).CommandId);
-//await commandExecution.Response;
