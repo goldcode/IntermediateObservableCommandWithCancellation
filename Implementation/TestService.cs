@@ -27,12 +27,15 @@ namespace Implementation
 
         public IIntermediateObservableCommand<string> ObservableIntermediateCommandWithCancellation()
         {
-            return new ObservableIntermediateCommand();
+            var cancellationTokenSource = new CancellationTokenSource();
+            return new ObservableIntermediateCommand(cancellationTokenSource);
         }
     }
 
     class ObservableIntermediateCommand : ObservableIntermediatesCommand<string>
     {
+        public ObservableIntermediateCommand(CancellationTokenSource cancellationTokenSource) : base(cancellationTokenSource) { }
+
         public override async Task Run()
         {
             //PushStateUpdate(0, TimeSpan.MaxValue, CommandState.Running);   
